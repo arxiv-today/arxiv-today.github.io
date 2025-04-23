@@ -624,9 +624,8 @@
 				// TODO: This should use the date here..
 				Alpine.store('main').getSelectedArticlesOfTheDay(date);
 
-				// MathJax.typeset(); // This likely executes too early, but "await Alpine.$nextTick();" doesn't work
-				// Added a timeout to execute it somewhat later... let's see.
-				Alpine.nextTick(() => { setTimeout(() => MathJax.typeset(), 1000); });
+				// Tell MathJax to process math.
+				Alpine.nextTick(() => { MathJax.typesetPromise().catch(console.error); });
 
 			}); // end get url
 
@@ -660,7 +659,7 @@
 					var index = this.digest.findIndex(article => article.id === id);
 					this.digest[index].selected = !this.digest[index].selected;
 					this.articleSelectionChange(id);
-					Alpine.nextTick(() => { MathJax.typeset(); });
+					Alpine.nextTick(() => { MathJax.typesetPromise().catch(console.error); });
 				}
 			});
 
