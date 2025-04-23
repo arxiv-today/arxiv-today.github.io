@@ -730,7 +730,7 @@
 			Alpine.store('main').digest.forEach((article, index) => Alpine.store('main').digest[index].hide = filterOut(article));
 		}
 
-        function reflectUserData() {
+        async function reflectUserData() {
             if(userIsSignedIn()) {
                 const uid = auth.currentUser.uid;
                 const userdoc = doc(db, "users/" + uid);
@@ -751,7 +751,7 @@
 							// Could also "watch" the store array in #selectcategories directly, but careful with infinite loops
 							// https://postsrc.com/code-snippets/how-to-watch-alpine-js-store-value
 							$('#selectcategories').val(Alpine.store('main').categories).multiselect('refresh');
-							selectedCategoriesUpdated();
+							await selectedCategoriesUpdated();
 						}
                     }
                 });
@@ -763,9 +763,9 @@
             }
         }
 
-        function authStateObserver(user) {
+        async function authStateObserver(user) {
             if(user) {
-                reflectUserData();
+                await reflectUserData();
                 var userName = auth.currentUser.displayName;
                 document.getElementById("user-name").innerText = userName;
                 document.getElementById("signin-div").style.display = "none";
@@ -837,11 +837,11 @@
 		const arraysHaveCommonElement = (array1, array2) => {
 			return array1.some(x => array2.includes(x));
 		};
-		const selectedCategoriesUpdated = () => {
+		async function selectedCategoriesUpdated() {
 			// TODO: Only fetch the ones we didn't already.
 			$("#listdigests").html("");
 			Alpine.store('main').categories = $('#selectcategories').val();
-			Alpine.store('main').categories.forEach(category => fetchCategory(category));
+			await Alpine.store('main').categories.forEach(category => fetchCategory(category));
 			Alpine.store('main').digest = Alpine.store('main').digest.filter(article => arraysHaveCommonElement(article.incategories, Alpine.store('main').categories));
             if(userIsSignedIn()) {
                 const uid = auth.currentUser.uid;
