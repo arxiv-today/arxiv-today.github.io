@@ -578,7 +578,7 @@
 					throw new Error(`HTTP error, status: ${res.status}`);
 				}
 				const xmlText = await res.text();
-				processCategoryXml(xmlText, fullurl);
+				processCategoryXml(xmlText, category, fullurl);
 			}
 			catch (error) {
 				console.error('Failed to fetch category', category, error);
@@ -586,7 +586,7 @@
 
 		}
 
-		const processCategoryXml = (xmlText, fullurl) => {
+		const processCategoryXml = (xmlText, category, fullurl) => {
 			var $xml = $(xmlText);
 			//console.log($xml);
 			var catlongname = $xml.find("channel").find("title")[0].innerHTML;
