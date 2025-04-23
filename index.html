@@ -572,12 +572,13 @@
 			// var rssbaseurl = "https://rss.arxiv.org/rss/";
 
 			try {
-				const res = await fetch(`${rssbaseurl}${category}`);
+				var fullurl = `${rssbaseurl}${category}`;
+				const res = await fetch(fullurl);
 				if (!res.ok) {
 					throw new Error(`HTTP error, status: ${res.status}`);
 				}
 				const xmlText = await res.text();
-				processCategoryXml(xmlText);
+				processCategoryXml(xmlText, fullurl);
 			}
 			catch (error) {
 				console.error('Failed to fetch category', category, error);
@@ -585,13 +586,13 @@
 
 		}
 
-		const processCategoryXml = (xmlText) => {
+		const processCategoryXml = (xmlText, fullurl) => {
 			var $xml = $(xmlText);
 			//console.log($xml);
 			var catlongname = $xml.find("channel").find("title")[0].innerHTML;
 			var date = new Date($xml.find("channel").find("pubDate")[0].innerHTML);
 			//$("#listdigests").append('<li><a target="_blank" href="https://arxiv.org/list/' + category + '/recent">' + catlongname + '</a>, ' + date.toDateString() + '</li>');
-			$("#listdigests").append('<li><a target="_blank" href="' + rssbaseurl + category + '">' + catlongname + '</a>, ' + date.toDateString() + '</li>');
+			$("#listdigests").append('<li><a target="_blank" href="' + fullurl + '">' + catlongname + '</a>, ' + date.toDateString() + '</li>');
 
 
 			$xml.find("channel").find("item").each(function() {
