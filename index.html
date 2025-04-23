@@ -587,9 +587,8 @@
 		}
 
 		const processCategoryXml = (xmlText, category, fullurl) => {
-			console.log(xmlText);
 			var $xml = $(xmlText);
-			console.log($xml);
+			//console.log($xml);
 			var catlongname = $xml.find("channel").find("title")[0].innerHTML;
 			var date = new Date($xml.find("channel").find("pubDate")[0].innerHTML);
 			//$("#listdigests").append('<li><a target="_blank" href="https://arxiv.org/list/' + category + '/recent">' + catlongname + '</a>, ' + date.toDateString() + '</li>');
