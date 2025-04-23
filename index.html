@@ -252,7 +252,7 @@
 	<p>
 		Sign in and select arXiv lists in the options.
 		The latest daily announcements appear below, with some filtered out based on keywords.
-		Click the rows of papers that look interesting: their abstracts will appear at the bottom of the page, with buttons to share (clipboard &#x1F4CB;; slack <img src="slack.png" width="16px" style="padding-bottom: 4px;"/> if enabled).
+		Click the rows of papers that look interesting: their abstracts will appear at the bottom of the page, with buttons to share (clipboard &#x1F4CB;; slack <img src="slack.png" width="16px" style="padding-bottom: 4px;" alt="Slack logo"/> if enabled).
 		<ul id="listdigests"></ul>
 	</p>
 	
@@ -346,10 +346,10 @@
 					x-on:click.prevent="toClipboard(article.id, $el)">&#x1F4CB;</a>
 				<a href="" style="text-decoration: none" title="Send to slack"
 					x-on:click.prevent="toSlack(article.id, $el)"
-					x-show="$store.main.slackurl.length > 4"><img src="slack.png" width="16px" style="padding-bottom: 4px;"/></a>
+					x-show="$store.main.slackurl.length > 4"><img src="slack.png" width="16px" style="padding-bottom: 4px;" alt="Slack logo"/></a>
 					<!--
 					x-data="{get showSlack() {{return document.getElementById('slackurl').value.trim().length > 0;}}}"
-					x-show="showSlack"><img src="slack.png" width="16px" style="padding-bottom: 4px;"/></a>
+					x-show="showSlack"><img src="slack.png" width="16px" style="padding-bottom: 4px;" alt="Slack logo"/></a>
 					-->
 				<br/><i x-text="article.authors"></i>
 				<br/><span x-html="article.summary"></span>
