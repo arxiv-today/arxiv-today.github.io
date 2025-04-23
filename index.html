@@ -557,13 +557,13 @@
 					});
 		}
 
-		async function fetchCategory(category) {
+		const fetchCategory = (category) => {
 
 			// We fetch articles listed in the following rss feed:
 			// "https://export.arxiv.org/rss/" + category
 			// However, since that feed does not set CORS headers properly,
 			// we instead issue the query to a worker on cloudflare.
-			// That worker fetches the data from arxiv and adds the
+			// That worker fetches the data from arxiv and add the
 			// proper headers before passing the response along.
 			// https://developers.cloudflare.com/workers/examples/alter-headers/
 			// https://developers.cloudflare.com/workers/examples/cors-header-proxy/
@@ -571,74 +571,65 @@
 			var rssbaseurl = "https://arxiv-digest-fetcher.nicolasboumal.workers.dev/?category=";
 			// var rssbaseurl = "https://rss.arxiv.org/rss/";
 
-			try {
-				const res = await fetch(`${rssbaseurl}${category}`);
-				if (!res.ok) {
-					throw new Error(`HTTP error, status: ${res.status}`);
-				}
-				const xmlText = await res.text();
-				processCategoryXml(xmlText);
-			}
-			catch (error) {
-				console.error('Failed to fetch category', category, error);
-			}
+			$.get(rssbaseurl + category, function(data) {
 
-		}
-
-		const processCategoryXml = (xmlText) => {
-			var $xml = $(xmlText);
-			//console.log($xml);
-			var catlongname = $xml.find("channel").find("title")[0].innerHTML;
-			var date = new Date($xml.find("channel").find("pubDate")[0].innerHTML);
-			//$("#listdigests").append('<li><a target="_blank" href="https://arxiv.org/list/' + category + '/recent">' + catlongname + '</a>, ' + date.toDateString() + '</li>');
-			$("#listdigests").append('<li><a target="_blank" href="' + rssbaseurl + category + '">' + catlongname + '</a>, ' + date.toDateString() + '</li>');
+				var $xml = $(data);
+				//console.log($xml);
+				var catlongname = $xml.find("channel").find("title")[0].innerHTML;
+				var date = new Date($xml.find("channel").find("pubDate")[0].innerHTML);
+				//$("#listdigests").append('<li><a target="_blank" href="https://arxiv.org/list/' + category + '/recent">' + catlongname + '</a>, ' + date.toDateString() + '</li>');
+				$("#listdigests").append('<li><a target="_blank" href="' + rssbaseurl + category + '">' + catlongname + '</a>, ' + date.toDateString() + '</li>');
 
 
-			$xml.find("channel").find("item").each(function() {
+				$xml.find("channel").find("item").each(function() {
 
-				var $this = $(this);
-				var article = {
-					id: $this.find("link").text().split('/').slice(-1)[0], // could use .pop() instead of .slice(-1)[0]
-					version: Number($this.find("guid").text().split('v').slice(-1)[0]),
-					title: $this.find("title").text(),
-					authors: latexAccentsToHtml(extractTextFromHtml($this.find("dc\\:creator").text().split("\n").map(s => s.trim()).filter(s => s !== '').join(', '))),   // "[nodeName=dc:creator]", https://stackoverflow.com/questions/853740/how-to-use-jquery-for-xml-parsing-with-namespaces
-					maincategory: $this.find("category")[0].innerHTML, // this is the official primary category of the article
-					incategories: [category], // keep track of all loaded categories where this article came up -- does this still work?
-					updated: ($this.find("arxiv\\:announce_type").text().includes('replace')),
-					crosslisted: ($this.find("arxiv\\:announce_type").text().includes('cross')),
-					link: $this.find("link").text(),
-					summary: $this.find("description").text().replaceAll("\n", " ").split("Abstract: ").slice(-1)[0],
-					hide: false,
-					selected: false,
-					date: date  // redundant, but it's convenient to have it here for syncing with db
-				};
+					var $this = $(this);
+					var article = {
+						id: $this.find("link").text().split('/').slice(-1)[0], // could use .pop() instead of .slice(-1)[0]
+						version: Number($this.find("guid").text().split('v').slice(-1)[0]),
+						title: $this.find("title").text(),
+						authors: latexAccentsToHtml(extractTextFromHtml($this.find("dc\\:creator").text().split("\n").map(s => s.trim()).filter(s => s !== '').join(', '))),   // "[nodeName=dc:creator]", https://stackoverflow.com/questions/853740/how-to-use-jquery-for-xml-parsing-with-namespaces
+						maincategory: $this.find("category")[0].innerHTML, // this is the official primary category of the article
+						incategories: [category], // keep track of all loaded categories where this article came up -- does this still work?
+						updated: ($this.find("arxiv\\:announce_type").text().includes('replace')),
+						crosslisted: ($this.find("arxiv\\:announce_type").text().includes('cross')),
+						link: $this.find("link").text(),
+						summary: $this.find("description").text().replaceAll("\n", " ").split("Abstract: ").slice(-1)[0],
+						hide: false,
+						selected: false,
+						date: date  // redundant, but it's convenient to have it here for syncing with db
+					};
 
-				// console.log($this);
-				// console.log(article);
-				
-				// Try to find this article in the list we have already built so far.
-				var index = Alpine.store('main').digest.findIndex(existing_article => existing_article.id === article.id);
-				if(index == -1) {
-					// The article is new: determine whether it should be hidden or not,
-					article.hide = filterOut(article);
-					// and add it to the collection.
-					Alpine.store('main').digest.push(article);
-				}
-				else {
-					// The article is already in the list: record the fact that we saw it in this category too.
-					if(!Alpine.store('main').digest[index].incategories.some(cat => cat === category)) {
-						Alpine.store('main').digest[index].incategories.push(category);
+					// console.log($this);
+					// console.log(article);
+					
+					// Try to find this article in the list we have already built so far.
+					var index = Alpine.store('main').digest.findIndex(existing_article => existing_article.id === article.id);
+					if(index == -1) {
+						// The article is new: determine whether it should be hidden or not,
+						article.hide = filterOut(article);
+						// and add it to the collection.
+						Alpine.store('main').digest.push(article);
 					}
-				}
+					else {
+						// The article is already in the list: record the fact that we saw it in this category too.
+						if(!Alpine.store('main').digest[index].incategories.some(cat => cat === category)) {
+							Alpine.store('main').digest[index].incategories.push(category);
+						}
+					}
 
-			}); // end for each item in xml
+				}); // end for each item in xml
 
-			// Get the list of papers already selected, as stored on DB, and update Alpine list.
-			// TODO: This should use the date here..
-			Alpine.store('main').getSelectedArticlesOfTheDay(date);
+				// Get the list of papers already selected, as stored on DB, and update Alpine list.
+				// TODO: This should use the date here..
+				Alpine.store('main').getSelectedArticlesOfTheDay(date);
 
-			// Tell MathJax to process math.
-			Alpine.nextTick(() => { MathJax.typesetPromise().catch(console.error); });
+				// Tell MathJax to process math.
+				Alpine.nextTick(() => { MathJax.typesetPromise().catch(console.error); });
+
+			}); // end get url
+
+			// TODO handle fails?
 		};
 
 		document.addEventListener('alpine:init', () => {
