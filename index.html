@@ -627,9 +627,13 @@
 				// Tell MathJax to process math.
 				Alpine.nextTick(() => { MathJax.typesetPromise().catch(console.error); });
 
+			}).fail(function(jqXHR, textStatus, errorThrown) {
+				console.error("Failed to fetch " + category + ": " + textStatus, errorThrown);
+				// Optional: Display an error message to the user
+				$("#listdigests").append(
+				    '<li>Failed to load digest for ' + category + '. Please try again later.</li>'
+				);
 			}); // end get url
-
-			// TODO handle fails?
 		};
 
 		document.addEventListener('alpine:init', () => {
