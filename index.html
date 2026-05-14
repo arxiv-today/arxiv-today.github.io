@@ -363,6 +363,15 @@
 	<br/>
 	
 	<script>
+
+		const rerenderMath = () => {
+			MathJax.startup.promise
+				.then(() => {
+					MathJax.typesetClear();
+					return MathJax.typesetPromise();
+			})
+			.catch(console.error);
+		};
 		
 		const escapeHtml = (unsafe) => {
 			return unsafe.replaceAll('&', '&amp;').replaceAll('<', '&lt;')
@@ -560,7 +569,7 @@
 					.done(() => {
 						var oldtext = $button.innerHTML;
 						$button.innerHTML = "&#x2713;";
-						setTimeout(() => {$button.innerHTML = oldtext;}, 10000);
+						// setTimeout(() => {$button.innerHTML = oldtext;}, 10000); -- this used to reset the slack button after 10s, but then it wasn't clear if it worked or no. You can always refresh the page if you really want to click the button again.
 					})
 					.fail(function(jqxhr, settings, ex) {
 						var oldtext = $button.innerHTML;
@@ -632,7 +641,7 @@
 				Alpine.store('main').getSelectedArticlesOfTheDay(date);
 
 				// Tell MathJax to process math.
-				Alpine.nextTick(() => { MathJax.typesetPromise().catch(console.error); });
+				Alpine.nextTick(rerenderMath);
 
 			}).fail(function(jqXHR, textStatus, errorThrown) {
 				console.error("Failed to fetch " + category + ": " + textStatus, errorThrown);
@@ -670,7 +679,7 @@
 					var index = this.digest.findIndex(article => article.id === id);
 					this.digest[index].selected = !this.digest[index].selected;
 					this.articleSelectionChange(id);
-					Alpine.nextTick(() => { MathJax.typesetPromise().catch(console.error); });
+					Alpine.nextTick(rerenderMath);
 				}
 			});
 
