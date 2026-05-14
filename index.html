@@ -255,7 +255,7 @@
 		Sign in and select arXiv lists in the options.
 		The latest daily announcements appear below, with some filtered out based on keywords.
 		Click the rows of papers that look interesting: their abstracts will appear at the bottom of the page, with buttons to share (clipboard &#x1F4CB;; slack <img src="slack.png" width="16px" style="padding-bottom: 4px;" alt="Slack logo"/> if enabled).
-		<ul id="listdigests"></ul>
+		<div id="loadeddigestlink"></div>
 	</p>
 	
 	<table>
@@ -592,8 +592,7 @@
 				//console.log($xml);
 				var catlongname = $xml.find("channel").find("title")[0].innerHTML;
 				var date = new Date($xml.find("channel").find("pubDate")[0].innerHTML);
-				//$("#listdigests").append('<li><a target="_blank" href="https://arxiv.org/list/' + category + '/recent">' + catlongname + '</a>, ' + date.toDateString() + '</li>');
-				$("#listdigests").append('<li><a target="_blank" href="' + rssbaseurl + category + '">' + catlongname + '</a>, ' + date.toDateString() + '</li>');
+				$("#loadeddigestlink").html('<a target="_blank" href="' + rssbaseurl + category + '">' + catlongname + '</a>, ' + date.toDateString());
 
 
 				$xml.find("channel").find("item").each(function() {
@@ -638,8 +637,8 @@
 			}).fail(function(jqXHR, textStatus, errorThrown) {
 				console.error("Failed to fetch " + category + ": " + textStatus, errorThrown);
 				// Optional: Display an error message to the user
-				$("#listdigests").append(
-				    '<li>Failed to load digest for ' + category + '. Please try again later.</li>'
+				$("#loadeddigestlink").html(
+				    '<a target="_blank" href="' + rssbaseurl + category + '">Failed to load digest for ' + category + '. Please try again later.</a>'
 				);
 			}); // end get url
 		};
@@ -840,7 +839,7 @@
 		};
 		const selectedCategoriesUpdated = () => {
 			// Reset
-			$("#listdigests").html("");
+			$("#loadeddigestlink").html("");
 			Alpine.store('main').digest = [];
 
 			Alpine.store('main').categories = $('#selectcategories').val();
