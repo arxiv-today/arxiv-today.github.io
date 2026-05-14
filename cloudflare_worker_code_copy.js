@@ -50,7 +50,7 @@ async function handleRequest(request) {
   // https://arxiv-digest-fetcher.nicolasboumal.workers.dev/?category=math.NA
   // https://arxiv-digest-fetcher.nicolasboumal.workers.dev/?category=math.NA+math.OC
   const url = new URL(request.url);
-  const category = url.searchParams.get('category');
+  const category = url.searchParams.get('category').replaceAll(' ', '+');
 
   // If the category parameter is missing, return a client error.
   if (!category) {
