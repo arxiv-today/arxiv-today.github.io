@@ -48,6 +48,7 @@ async function fetchWithRetry(url, fetchOptions, retryOptions = { retries: 3, de
 async function handleRequest(request) {
   // The worker should be called as follows (for example):
   // https://arxiv-digest-fetcher.nicolasboumal.workers.dev/?category=math.NA
+  // https://arxiv-digest-fetcher.nicolasboumal.workers.dev/?category=math.NA+math.OC
   const url = new URL(request.url);
   const category = url.searchParams.get('category');
 

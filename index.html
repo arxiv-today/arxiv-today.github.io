@@ -605,7 +605,6 @@
 						title: $this.find("title").text(),
 						authors: latexAccentsToHtml(extractTextFromHtml($this.find("dc\\:creator").text().split("\n").map(s => s.trim()).filter(s => s !== '').join(', '))),   // "[nodeName=dc:creator]", https://stackoverflow.com/questions/853740/how-to-use-jquery-for-xml-parsing-with-namespaces
 						maincategory: $this.find("category")[0].innerHTML, // this is the official primary category of the article
-						incategories: [category], // keep track of all loaded categories where this article came up -- does this still work?
 						updated: ($this.find("arxiv\\:announce_type").text().includes('replace')),
 						crosslisted: ($this.find("arxiv\\:announce_type").text().includes('cross')),
 						link: $this.find("link").text(),
@@ -625,12 +624,6 @@
 						article.hide = filterOut(article);
 						// and add it to the collection.
 						Alpine.store('main').digest.push(article);
-					}
-					else {
-						// The article is already in the list: record the fact that we saw it in this category too.
-						if(!Alpine.store('main').digest[index].incategories.some(cat => cat === category)) {
-							Alpine.store('main').digest[index].incategories.push(category);
-						}
 					}
 
 				}); // end for each item in xml
@@ -846,18 +839,26 @@
 			return array1.some(x => array2.includes(x));
 		};
 		const selectedCategoriesUpdated = () => {
-			// TODO: Only fetch the ones we didn't already.
+			// Reset
 			$("#listdigests").html("");
+			Alpine.store('main').digest = [];
+
 			Alpine.store('main').categories = $('#selectcategories').val();
-			Alpine.store('main').categories.forEach(category => fetchCategory(category));
-			Alpine.store('main').digest = Alpine.store('main').digest.filter(article => arraysHaveCommonElement(article.incategories, Alpine.store('main').categories));
-            if(userIsSignedIn()) {
-                const uid = auth.currentUser.uid;
-                const userdoc = doc(db, "users/" + uid);
-                var data = { categories: Alpine.store('main').categories };
-                setDoc(userdoc, data, {merge: true}); // create the doc if inexistent; update it if existent.
-                // TODO: add .then and .catch handlers.
-            }
+
+			// Fetch all categories in one request
+			if (Alpine.store('main').categories.length > 0) {
+					const combinedCategory =
+							Alpine.store('main').categories.join('+');
+					fetchCategory(combinedCategory);
+			}
+
+			if(userIsSignedIn()) {
+					const uid = auth.currentUser.uid;
+					const userdoc = doc(db, "users/" + uid);
+					var data = { categories: Alpine.store('main').categories };
+					setDoc(userdoc, data, {merge: true}); // create the doc if inexistent; update it if existent.
+					// TODO: add .then and .catch handlers.
+			}
 		};
 		const articleSelectionChange = (id) => {
             if(userIsSignedIn()) {
