@@ -342,7 +342,7 @@
 		<template x-for="article in $store.main.articlesSelected" :key="article.id">
 			<li>
 				<a target="_blank" :href="article.link"
-					x-data="{ get title() { return escapeHtml(article.title) + ((article.updated) ? ' (updated, v' + article.version + ')' : '') } }"
+					x-data="{ get title() { return article.title + ((article.updated) ? ' (updated, v' + article.version + ')' : '') } }"
 					x-text="title"></a>
 				<a href="" style="text-decoration: none" title="Copy to clipboard"
 					x-on:click.prevent="toClipboard(article.id, $el)">&#x1F4CB;</a>
@@ -540,7 +540,7 @@
 
 		async function toClipboard(id, $button) {
 			var article = getArticle(id);
-			var text = escapeHtml(article.title) + 
+			var text = article.title + 
 						"\r\n" + article.authors +
 						"\r\n" + article.link +
 						((article.updated) ? " (updated, v" + article.version + ")" : "") +
@@ -554,7 +554,7 @@
 
 		const toSlack = (id, $button) => {
 			var article = getArticle(id);
-			var text = escapeHtml(article.title) +
+			var text = article.title +
 						"\n_" + article.authors + "_" +
 						"\n" + article.link +
 						((article.updated) ? " (updated, v" + article.version + ")" : "") +
