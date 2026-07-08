@@ -382,118 +382,231 @@
 		
 
 		const latexAccentsToHtml = (latexstring) => {
-    return latexstring
-        // Acute
-        .replaceAll(/\\'([aceinouyAEIOUY])/g, (match, p1) => {
-            const accents = {
-                'a': 'á', 'c': 'ć', 'e': 'é', 'i': 'í', 'n': 'ń', 'o': 'ó', 'u': 'ú', 'y': 'ý',
-                'A': 'Á', 'C': 'Ć', 'E': 'É', 'I': 'Í', 'N': 'Ń', 'O': 'Ó', 'U': 'Ú', 'Y': 'Ý'
-            };
-            return accents[p1] || match;
-        })
-        // Grave
-        .replaceAll(/\\`([aeiouyAEIOUY])/g, (match, p1) => {
-            const accents = {
-                'a': 'à', 'e': 'è', 'i': 'ì', 'o': 'ò', 'u': 'ù', 'y': 'ỳ',
-                'A': 'À', 'E': 'È', 'I': 'Ì', 'O': 'Ò', 'U': 'Ù', 'Y': 'Ỳ'
-            };
-            return accents[p1] || match;
-        })
-        // Circumflex
-        .replaceAll(/\\\^([aeiouAEIOU])/g, (match, p1) => {
-            const accents = {
-                'a': 'â', 'e': 'ê', 'i': 'î', 'o': 'ô', 'u': 'û',
-                'A': 'Â', 'E': 'Ê', 'I': 'Î', 'O': 'Ô', 'U': 'Û'
-            };
-            return accents[p1] || match;
-        })
-        // Umlaut/Diaeresis
-        .replaceAll(/\\"([aeiouyAEIOUY])/g, (match, p1) => {
-            const accents = {
-                'a': 'ä', 'e': 'ë', 'i': 'ï', 'o': 'ö', 'u': 'ü', 'y': 'ÿ',
-                'A': 'Ä', 'E': 'Ë', 'I': 'Ï', 'O': 'Ö', 'U': 'Ü', 'Y': 'Ÿ'
-            };
-            return accents[p1] || match;
-        })
-        // Tilde
-        .replaceAll(/\\~([anoANO])/g, (match, p1) => {
-            const accents = {
-                'a': 'ã', 'n': 'ñ', 'o': 'õ',
-                'A': 'Ã', 'N': 'Ñ', 'O': 'Õ'
-            };
-            return accents[p1] || match;
-        })
-        // Macron
-        .replaceAll(/\\=([aeiouAEIOU])/g, (match, p1) => {
-            const accents = {
-                'a': 'ā', 'e': 'ē', 'i': 'ī', 'o': 'ō', 'u': 'ū',
-                'A': 'Ā', 'E': 'Ē', 'I': 'Ī', 'O': 'Ō', 'U': 'Ū'
-            };
-            return accents[p1] || match;
-        })
-        // Dot above
-        .replaceAll(/\\\.{([zZ])}/g, (match, p1) => {
-            const accents = { 'z': 'ż', 'Z': 'Ż' };
-            return accents[p1] || match;
-        })
-        // Breve
-        .replaceAll(/\\u{([aeAE])}/g, (match, p1) => {
-            const accents = { 'a': 'ă', 'e': 'ĕ', 'A': 'Ă', 'E': 'Ĕ' };
-            return accents[p1] || match;
-        })
-        // Caron/hacek
-        .replaceAll(/\\v{([cCsSzZeErRtT])}/g, (match, p1) => {
-            const accents = {
-                'c': 'č', 's': 'š', 'z': 'ž', 'e': 'ě', 'r': 'ř', 't': 'ť',
-                'C': 'Č', 'S': 'Š', 'Z': 'Ž', 'E': 'Ě', 'R': 'Ř', 'T': 'Ť'
-            };
-            return accents[p1] || match;
-        })
-        // Ring
-        .replaceAll(/\\r{([auAU])}/g, (match, p1) => {
-            const accents = { 'a': 'å', 'u': 'ů', 'A': 'Å', 'U': 'Ů' };
-            return accents[p1] || match;
-        })
-        // Cedilla
-        .replaceAll(/\\c{([cCsS])}/g, (match, p1) => {
-            const accents = { 'c': 'ç', 's': 'ş', 'C': 'Ç', 'S': 'Ş' };
-            return accents[p1] || match;
-        })
-        // Ogonek
-        .replaceAll(/\\k{([aeiouAEIOU])}/g, (match, p1) => {
-            const accents = {
-                'a': 'ą', 'e': 'ę', 'i': 'į', 'o': 'ǫ', 'u': 'ų',
-                'A': 'Ą', 'E': 'Ę', 'I': 'Į', 'O': 'Ǫ', 'U': 'Ų'
-            };
-            return accents[p1] || match;
-        })
-        // Double acute
-        .replaceAll(/\\H{([ouOU])}/g, (match, p1) => {
-            const accents = { 'o': 'ő', 'u': 'ű', 'O': 'Ő', 'U': 'Ű' };
-            return accents[p1] || match;
-        })
-        // Special characters
-        .replaceAll(/\{\\ss\}/g, 'ß')
-        .replaceAll(/\\ae/g, 'æ')
-        .replaceAll(/\\AE/g, 'Æ')
-        .replaceAll(/\\oe/g, 'œ')
-        .replaceAll(/\\OE/g, 'Œ')
-        .replaceAll(/\\aa/g, 'å')
-        .replaceAll(/\\AA/g, 'Å')
-        .replaceAll(/\\o/g, 'ø')
-        .replaceAll(/\\O/g, 'Ø')
-        .replaceAll(/\\l/g, 'ł')
-        .replaceAll(/\\L/g, 'Ł')
-        .replaceAll(/\\dh/g, 'ð')
-        .replaceAll(/\\DH/g, 'Ð')
-        .replaceAll(/\\th/g, 'þ')
-        .replaceAll(/\\TH/g, 'Þ')
-        .replaceAll(/\\ng/g, 'ŋ')
-        .replaceAll(/\\NG/g, 'Ŋ')
-        // Remove braces around single letters (e.g., {a} -> a)
-        .replaceAll(/\{([a-zA-Z])\}/g, '$1');
+			let result = latexstring;
+			const applyMap = (regex, mapping) => {
+				result = result.replaceAll(regex, (match, p1) => mapping[p1] || match);
+			};
+
+			applyMap(/\\'([A-Za-z])/g, {
+				'a': 'á', 'c': 'ć', 'e': 'é', 'i': 'í', 'n': 'ń', 'o': 'ó', 'u': 'ú', 'y': 'ý',
+				'A': 'Á', 'C': 'Ć', 'E': 'É', 'I': 'Í', 'N': 'Ń', 'O': 'Ó', 'U': 'Ú', 'Y': 'Ý'
+			});
+			applyMap(/\\`([A-Za-z])/g, {
+				'a': 'à', 'e': 'è', 'i': 'ì', 'o': 'ò', 'u': 'ù', 'y': 'ỳ',
+				'A': 'À', 'E': 'È', 'I': 'Ì', 'O': 'Ò', 'U': 'Ù', 'Y': 'Ỳ'
+			});
+			applyMap(/\\\^([A-Za-z])/g, {
+				'a': 'â', 'e': 'ê', 'i': 'î', 'o': 'ô', 'u': 'û',
+				'A': 'Â', 'E': 'Ê', 'I': 'Î', 'O': 'Ô', 'U': 'Û'
+			});
+			applyMap(/\\"([A-Za-z])/g, {
+				'a': 'ä', 'e': 'ë', 'i': 'ï', 'o': 'ö', 'u': 'ü', 'y': 'ÿ',
+				'A': 'Ä', 'E': 'Ë', 'I': 'Ï', 'O': 'Ö', 'U': 'Ü', 'Y': 'Ÿ'
+			});
+			applyMap(/\\~([A-Za-z])/g, {
+				'a': 'ã', 'n': 'ñ', 'o': 'õ',
+				'A': 'Ã', 'N': 'Ñ', 'O': 'Õ'
+			});
+			applyMap(/\\=([A-Za-z])/g, {
+				'a': 'ā', 'e': 'ē', 'i': 'ī', 'o': 'ō', 'u': 'ū',
+				'A': 'Ā', 'E': 'Ē', 'I': 'Ī', 'O': 'Ō', 'U': 'Ū'
+			});
+			applyMap(/\\\.([A-Za-z])/g, {
+				'i': 'i', 'I': 'İ', 'j': 'j', 'J': 'J', 'z': 'ż', 'Z': 'Ż'
+			});
+			applyMap(/\\\.\{([A-Za-z])\}/g, {
+				'i': 'i', 'I': 'İ', 'j': 'j', 'J': 'J', 'z': 'ż', 'Z': 'Ż'
+			});
+			applyMap(/\\u([A-Za-z])/g, {
+				'a': 'ă', 'e': 'ĕ', 'g': 'ğ', 'i': 'ĭ', 'o': 'ŏ', 'u': 'ŭ',
+				'A': 'Ă', 'E': 'Ĕ', 'G': 'Ğ', 'I': 'Ĭ', 'O': 'Ŏ', 'U': 'Ŭ'
+			});
+			applyMap(/\\u\{([A-Za-z])\}/g, {
+				'a': 'ă', 'e': 'ĕ', 'g': 'ğ', 'i': 'ĭ', 'o': 'ŏ', 'u': 'ŭ',
+				'A': 'Ă', 'E': 'Ĕ', 'G': 'Ğ', 'I': 'Ĭ', 'O': 'Ŏ', 'U': 'Ŭ'
+			});
+			applyMap(/\\v([A-Za-z])/g, {
+				'c': 'č', 's': 'š', 'z': 'ž', 'e': 'ě', 'r': 'ř', 't': 'ť',
+				'C': 'Č', 'S': 'Š', 'Z': 'Ž', 'E': 'Ě', 'R': 'Ř', 'T': 'Ť'
+			});
+			applyMap(/\\v\{([A-Za-z])\}/g, {
+				'c': 'č', 's': 'š', 'z': 'ž', 'e': 'ě', 'r': 'ř', 't': 'ť',
+				'C': 'Č', 'S': 'Š', 'Z': 'Ž', 'E': 'Ě', 'R': 'Ř', 'T': 'Ť'
+			});
+			applyMap(/\\r([A-Za-z])/g, {
+				'a': 'å', 'u': 'ů', 'A': 'Å', 'U': 'Ů'
+			});
+			applyMap(/\\r\{([A-Za-z])\}/g, {
+				'a': 'å', 'u': 'ů', 'A': 'Å', 'U': 'Ů'
+			});
+			applyMap(/\\c([A-Za-z])/g, {
+				'c': 'ç', 's': 'ş', 'C': 'Ç', 'S': 'Ş'
+			});
+			applyMap(/\\c\{([A-Za-z])\}/g, {
+				'c': 'ç', 's': 'ş', 'C': 'Ç', 'S': 'Ş'
+			});
+			applyMap(/\\k([A-Za-z])/g, {
+				'a': 'ą', 'e': 'ę', 'i': 'į', 'o': 'ǫ', 'u': 'ų',
+				'A': 'Ą', 'E': 'Ę', 'I': 'Į', 'O': 'Ǫ', 'U': 'Ų'
+			});
+			applyMap(/\\k\{([A-Za-z])\}/g, {
+				'a': 'ą', 'e': 'ę', 'i': 'į', 'o': 'ǫ', 'u': 'ų',
+				'A': 'Ą', 'E': 'Ę', 'I': 'Į', 'O': 'Ǫ', 'U': 'Ų'
+			});
+			applyMap(/\\H([A-Za-z])/g, {
+				'o': 'ő', 'u': 'ű', 'O': 'Ő', 'U': 'Ű'
+			});
+			applyMap(/\\H\{([A-Za-z])\}/g, {
+				'o': 'ő', 'u': 'ű', 'O': 'Ő', 'U': 'Ű'
+			});
+
+			result = result
+				.replaceAll(/\{\\i\}/g, 'ı')
+				.replaceAll(/\{\\j\}/g, 'ĳ')
+				.replaceAll(/\\i/g, 'ı')
+				.replaceAll(/\\j/g, 'ĳ')
+				.replaceAll(/\{\\ss\}/g, 'ß')
+				.replaceAll(/\\ae/g, 'æ')
+				.replaceAll(/\\AE/g, 'Æ')
+				.replaceAll(/\\oe/g, 'œ')
+				.replaceAll(/\\OE/g, 'Œ')
+				.replaceAll(/\\aa/g, 'å')
+				.replaceAll(/\\AA/g, 'Å')
+				.replaceAll(/\\o/g, 'ø')
+				.replaceAll(/\\O/g, 'Ø')
+				.replaceAll(/\\l/g, 'ł')
+				.replaceAll(/\\L/g, 'Ł')
+				.replaceAll(/\\dh/g, 'ð')
+				.replaceAll(/\\DH/g, 'Ð')
+				.replaceAll(/\\th/g, 'þ')
+				.replaceAll(/\\TH/g, 'Þ')
+				.replaceAll(/\\ng/g, 'ŋ')
+				.replaceAll(/\\NG/g, 'Ŋ')
+				.replaceAll(/\{(\\[a-zA-Z]+)\}/g, '$1')
+				.replaceAll(/\{([A-Za-z])\}/g, '$1');
+
+			return result;
 		};
 
+		/*
+			const applyMap = (regex, mapping) => {
+				result = result.replaceAll(regex, (match, p1) => mapping[p1] || match);
+			};
+
+			// Acute
+			applyMap(/\'([A-Za-z])/g, {
+				'a': 'á', 'c': 'ć', 'e': 'é', 'i': 'í', 'n': 'ń', 'o': 'ó', 'u': 'ú', 'y': 'ý',
+				'A': 'Á', 'C': 'Ć', 'E': 'É', 'I': 'Í', 'N': 'Ń', 'O': 'Ó', 'U': 'Ú', 'Y': 'Ý'
+			});
+			// Grave
+			applyMap(/\`([A-Za-z])/g, {
+				'a': 'à', 'e': 'è', 'i': 'ì', 'o': 'ò', 'u': 'ù', 'y': 'ỳ',
+				'A': 'À', 'E': 'È', 'I': 'Ì', 'O': 'Ò', 'U': 'Ù', 'Y': 'Ỳ'
+			});
+			// Circumflex
+			applyMap(/\\^([A-Za-z])/g, {
+				'a': 'â', 'e': 'ê', 'i': 'î', 'o': 'ô', 'u': 'û',
+				'A': 'Â', 'E': 'Ê', 'I': 'Î', 'O': 'Ô', 'U': 'Û'
+			});
+			// Umlaut/Diaeresis
+			applyMap(/\"([A-Za-z])/g, {
+				'a': 'ä', 'e': 'ë', 'i': 'ï', 'o': 'ö', 'u': 'ü', 'y': 'ÿ',
+				'A': 'Ä', 'E': 'Ë', 'I': 'Ï', 'O': 'Ö', 'U': 'Ü', 'Y': 'Ÿ'
+			});
+			// Tilde
+			applyMap(/\~([A-Za-z])/g, {
+				'a': 'ã', 'n': 'ñ', 'o': 'õ',
+				'A': 'Ã', 'N': 'Ñ', 'O': 'Õ'
+			});
+			// Macron
+			applyMap(/\=([A-Za-z])/g, {
+				'a': 'ā', 'e': 'ē', 'i': 'ī', 'o': 'ō', 'u': 'ū',
+				'A': 'Ā', 'E': 'Ē', 'I': 'Ī', 'O': 'Ō', 'U': 'Ū'
+			});
+			// Dot above
+			applyMap(/\\.([A-Za-z])/g, {
+				'i': 'i', 'I': 'İ', 'j': 'j', 'J': 'J', 'z': 'ż', 'Z': 'Ż'
+			});
+			applyMap(/\\.\{([A-Za-z])\}/g, {
+				'i': 'i', 'I': 'İ', 'j': 'j', 'J': 'J', 'z': 'ż', 'Z': 'Ż'
+			});
+			// Breve
+			applyMap(/\u([A-Za-z])/g, {
+				'a': 'ă', 'e': 'ĕ', 'g': 'ğ', 'i': 'ĭ', 'o': 'ŏ', 'u': 'ŭ',
+				'A': 'Ă', 'E': 'Ĕ', 'G': 'Ğ', 'I': 'Ĭ', 'O': 'Ŏ', 'U': 'Ŭ'
+			});
+			applyMap(/\u\{([A-Za-z])\}/g, {
+				'a': 'ă', 'e': 'ĕ', 'g': 'ğ', 'i': 'ĭ', 'o': 'ŏ', 'u': 'ŭ',
+				'A': 'Ă', 'E': 'Ĕ', 'G': 'Ğ', 'I': 'Ĭ', 'O': 'Ŏ', 'U': 'Ŭ'
+			});
+			// Caron/hacek
+			applyMap(/\v([A-Za-z])/g, {
+				'c': 'č', 's': 'š', 'z': 'ž', 'e': 'ě', 'r': 'ř', 't': 'ť',
+				'C': 'Č', 'S': 'Š', 'Z': 'Ž', 'E': 'Ě', 'R': 'Ř', 'T': 'Ť'
+			});
+			applyMap(/\v\{([A-Za-z])\}/g, {
+				'c': 'č', 's': 'š', 'z': 'ž', 'e': 'ě', 'r': 'ř', 't': 'ť',
+				'C': 'Č', 'S': 'Š', 'Z': 'Ž', 'E': 'Ě', 'R': 'Ř', 'T': 'Ť'
+			});
+			// Ring
+			applyMap(/\r([A-Za-z])/g, {
+				'a': 'å', 'u': 'ů', 'A': 'Å', 'U': 'Ů'
+			});
+			applyMap(/\r\{([A-Za-z])\}/g, {
+				'a': 'å', 'u': 'ů', 'A': 'Å', 'U': 'Ů'
+			});
+			// Cedilla
+			applyMap(/\c([A-Za-z])/g, {
+				'c': 'ç', 's': 'ş', 'C': 'Ç', 'S': 'Ş'
+			});
+			applyMap(/\c\{([A-Za-z])\}/g, {
+				'c': 'ç', 's': 'ş', 'C': 'Ç', 'S': 'Ş'
+			});
+			// Ogonek
+			applyMap(/\k([A-Za-z])/g, {
+				'a': 'ą', 'e': 'ę', 'i': 'į', 'o': 'ǫ', 'u': 'ų',
+				'A': 'Ą', 'E': 'Ę', 'I': 'Į', 'O': 'Ǫ', 'U': 'Ų'
+			});
+			applyMap(/\k\{([A-Za-z])\}/g, {
+				'a': 'ą', 'e': 'ę', 'i': 'į', 'o': 'ǫ', 'u': 'ų',
+				'A': 'Ą', 'E': 'Ę', 'I': 'Į', 'O': 'Ǫ', 'U': 'Ų'
+			});
+			// Double acute
+			applyMap(/\H([A-Za-z])/g, {
+				'o': 'ő', 'u': 'ű', 'O': 'Ő', 'U': 'Ű'
+			});
+			applyMap(/\H\{([A-Za-z])\}/g, {
+				'o': 'ő', 'u': 'ű', 'O': 'Ő', 'U': 'Ű'
+			});
+
+			result = result
+				.replaceAll(/\i/g, 'ı')
+				.replaceAll(/\j/g, 'ĳ')
+				.replaceAll(/\{\ss\}/g, 'ß')
+				.replaceAll(/\ae/g, 'æ')
+				.replaceAll(/\AE/g, 'Æ')
+				.replaceAll(/\oe/g, 'œ')
+				.replaceAll(/\OE/g, 'Œ')
+				.replaceAll(/\aa/g, 'å')
+				.replaceAll(/\AA/g, 'Å')
+				.replaceAll(/\o/g, 'ø')
+				.replaceAll(/\O/g, 'Ø')
+				.replaceAll(/\l/g, 'ł')
+				.replaceAll(/\L/g, 'Ł')
+				.replaceAll(/\dh/g, 'ð')
+				.replaceAll(/\DH/g, 'Ð')
+				.replaceAll(/\\th/g, 'þ')
+				.replaceAll(/\TH/g, 'Þ')
+				.replaceAll(/\ng/g, 'ŋ')
+				.replaceAll(/\NG/g, 'Ŋ')
+				.replaceAll(/\{(\[a-zA-Z]+)\}/g, '$1')
+				.replaceAll(/\{([^\s{}])\}/g, '$1');
+
+			return result;
+		};
+
+		*/
+		// arXiv digest surrounds each author name with an <a> tag we don't need.
 		// arXiv digest surrounds each author name with an <a> tag we don't need.
 		// Likewise, abstracts have html, e.g., <p> tags.
 		// This bit of code removes the html parts.
