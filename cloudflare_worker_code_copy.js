@@ -61,7 +61,7 @@ async function handleRequest(request) {
 
   const arxivUrl = `https://rss.arxiv.org/rss/${category}`;
   const fetchOptions = {
-    cache: 'no-store'
+    cache: 'no-store' /* requires: in your Worker's dashboard settings, add the compatibility flag "cache_option_enabled" with compatibility date >= 11.11.20224, then save and deploy */
   };
 
   try {
