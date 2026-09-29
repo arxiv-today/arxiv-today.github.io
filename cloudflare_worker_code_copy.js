@@ -50,18 +50,18 @@ async function handleRequest(request) {
   // https://arxiv-digest-fetcher.nicolasboumal.workers.dev/?category=math.NA
   // https://arxiv-digest-fetcher.nicolasboumal.workers.dev/?category=math.NA+math.OC
   const url = new URL(request.url);
-  const category = url.searchParams.get('category').replaceAll(' ', '+');
+  const category = (url.searchParams.get('category') ?? '')
+    .trim()
+    .replaceAll(' ', '+');
 
   // If the category parameter is missing, return a client error.
   if (!category) {
     return new Response('Missing "category" query parameter in the URL.', { status: 400 });
   }
 
-  const arxivUrl = `https://export.arxiv.org/rss/${category}`;
+  const arxivUrl = `https://rss.arxiv.org/rss/${category}`;
   const fetchOptions = {
-    // This Cloudflare-specific option tells the edge not to cache the response from arXiv.
-    // This ensures your users always get the latest digest.
-    cf: { cacheTtl: -1 }
+    cache: 'no-store'
   };
 
   try {
@@ -70,11 +70,11 @@ async function handleRequest(request) {
 
     // Clone the response so that it's no longer immutable
     const newResponse = new Response(response.body, response);
+    newResponse.headers.set('Cache-Control', 'no-store');
 
     // Add the necessary CORS headers to allow your website to access the data
     newResponse.headers.set('Access-Control-Allow-Origin', '*');
     newResponse.headers.set('Access-Control-Allow-Methods', 'GET, HEAD, OPTIONS');
-    newResponse.headers.set('Access-Control-Max-Age', '0'); // Needed?
 
     return newResponse;
 
