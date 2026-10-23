@@ -864,9 +864,12 @@
 
         function reflectUserData() {
             if(userIsSignedIn()) {
-                const uid = auth.currentUser.uid;
+                const user = auth.currentUser;
+                const uid = user.uid;
                 const userdoc = doc(db, "users/" + uid);
                 getDoc(userdoc).then((obj) => {
+                    // A pending read must not restore account data after sign-out.
+                    if (auth.currentUser !== user) return;
                     if(obj.exists()) {   
                         const data = obj.data();
                         if("slackurl" in data) {
@@ -892,18 +895,21 @@
 				// Don't force empty categories if not signed in.
                 Alpine.store('main').slackurl = "";
                 Alpine.store('main').exclusions = "";
+				Alpine.store('main').digest.forEach(article => { article.selected = false; });
+				reflectExclusionsChange();
             }
         }
 
         function authStateObserver(user) {
             if(user) {
                 reflectUserData();
-                var userName = auth.currentUser.displayName;
+                var userName = user.displayName;
                 document.getElementById("user-name").innerText = userName;
                 document.getElementById("signin-div").style.display = "none";
                 document.getElementById("signout-div").style.display = "block";
             }
             else {
+                reflectUserData();
                 document.getElementById("user-name").innerText = "";
                 document.getElementById("signin-div").style.display = "block";
                 document.getElementById("signout-div").style.display = "none";
@@ -1004,10 +1010,12 @@
 		};
 		const getSelectedArticlesOfTheDay = (date) => {
             if(userIsSignedIn()) {
-				const uid = auth.currentUser.uid;
+				const user = auth.currentUser;
+				const uid = user.uid;
 				const dateid = date.toISOString().split('T')[0];  // E.g.: '2023-12-31'
 				const todayuserdoc = doc(db, "days/" + dateid + "/users/" + uid);
                 getDoc(todayuserdoc).then((obj) => {
+                    if (auth.currentUser !== user) return;
                     if(obj.exists()) {   
                         const data = obj.data();
                         if("selected" in data) {
