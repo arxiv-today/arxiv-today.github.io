@@ -995,8 +995,13 @@
 							const listofselectedarticles = data.selected;
 							listofselectedarticles.forEach((id) => {
 								const index = Alpine.store('main').digest.findIndex(article => article.id === id);
-								Alpine.store('main').digest[index].selected = true;
+								if (index !== -1) {
+									Alpine.store('main').digest[index].selected = true;
+								}
 							});
+							// Firebase resolves after the feed has loaded; wait for Alpine to
+							// insert the restored selections before typesetting their math.
+							Alpine.nextTick(rerenderMath);
 						}
 					}
 				});
