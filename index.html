@@ -889,7 +889,7 @@
 							selectedCategoriesUpdated();
 						}
                     }
-                });
+                }).catch(console.error);
             }
             else {
 				// Don't force empty categories if not signed in.
@@ -956,8 +956,7 @@
                 const uid = auth.currentUser.uid;
                 const userdoc = doc(db, "users/" + uid);
                 var data = { slackurl: document.getElementById("slackurl").value };
-                setDoc(userdoc, data, {merge: true}); // create the doc if inexistent; update it if existent.
-                // TODO: add .then and .catch handlers.
+                setDoc(userdoc, data, {merge: true}).catch(console.error); // create the doc if inexistent; update it if existent.
             }
         };
 
@@ -967,8 +966,7 @@
                 const uid = auth.currentUser.uid;
                 const userdoc = doc(db, "users/" + uid);
                 var data = { exclusions: document.getElementById("exclusion-textarea").value };
-                setDoc(userdoc, data, {merge: true}); // create the doc if inexistent; update it if existent.
-                // TODO: add .then and .catch handlers.
+                setDoc(userdoc, data, {merge: true}).catch(console.error); // create the doc if inexistent; update it if existent.
             }
         };
 		
@@ -993,8 +991,7 @@
 					const uid = auth.currentUser.uid;
 					const userdoc = doc(db, "users/" + uid);
 					var data = { categories: Alpine.store('main').categories };
-					setDoc(userdoc, data, {merge: true}); // create the doc if inexistent; update it if existent.
-					// TODO: add .then and .catch handlers.
+					setDoc(userdoc, data, {merge: true}).catch(console.error); // create the doc if inexistent; update it if existent.
 			}
 		};
 		const articleSelectionChange = (id) => {
@@ -1005,7 +1002,7 @@
 				const todayuserdoc = doc(db, "days/" + dateid + "/users/" + uid);
 				const listofselectedarticles = Alpine.store('main').digest.filter(article => article.selected).map(article => article.id); // array of selected article IDs
 				const data = { selected: listofselectedarticles };
-				setDoc(todayuserdoc, data, { merge: true }); // create the doc if inexistent; update it if existent. TODO: add .then and .catch handlers.
+				setDoc(todayuserdoc, data, { merge: true }).catch(console.error); // create the doc if inexistent; update it if existent.
             }
 		};
 		const getSelectedArticlesOfTheDay = (date) => {
@@ -1031,7 +1028,7 @@
 							Alpine.nextTick(rerenderMath);
 						}
 					}
-				});
+				}).catch(console.error);
             }
 		};
 		Alpine.store('main').articleSelectionChange = articleSelectionChange;
