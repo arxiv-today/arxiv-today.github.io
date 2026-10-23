@@ -364,13 +364,31 @@
 	
 	<script>
 
+		// The async script may still be loading when the first feed arrives.
+		const mathJaxReady = new Promise((resolve, reject) => {
+			const waitForStartup = () => resolve(MathJax.startup.promise);
+			if (window.MathJax?.startup?.promise) {
+				waitForStartup();
+			} else {
+				const script = document.getElementById('MathJax-script');
+				script.addEventListener('load', waitForStartup, { once: true });
+				script.addEventListener('error', () => reject(new Error('MathJax failed to load.')), { once: true });
+			}
+		});
+		// Handle a load failure even if no papers have requested typesetting yet.
+		mathJaxReady.catch(console.error);
+		let mathRenderQueue = Promise.resolve();
 		const rerenderMath = () => {
-			MathJax.startup.promise
+			// MathJax 3 requires callers to serialize asynchronous typesetting.
+			mathRenderQueue = mathRenderQueue
+				.then(() => mathJaxReady)
+				.then(() => Alpine.nextTick())
 				.then(() => {
 					MathJax.typesetClear();
 					return MathJax.typesetPromise();
-			})
-			.catch(console.error);
+				})
+				.catch(console.error);
+			return mathRenderQueue;
 		};
 		
 		const escapeHtml = (unsafe) => {
@@ -632,7 +650,7 @@
 	
 		const filterOut = (article) => {
 			// We want to hide this paper if the title contains a word from the exclusions list.
-			var exclusion = document.getElementById('exclusion-textarea').value.split('\n');
+			var exclusion = Alpine.store('main').exclusions.split('\n');
 			// If the title contains any word from the list (case insensitive), return true.
 			var lctitle = article.title.toLowerCase();
 			return exclusion.some(word => word.trim().length >= 1 && lctitle.includes(word.toLowerCase()));
@@ -841,6 +859,7 @@
 
 		function reflectExclusionsChange() {
 			Alpine.store('main').digest.forEach((article, index) => Alpine.store('main').digest[index].hide = filterOut(article));
+			Alpine.nextTick(rerenderMath);
 		}
 
         function reflectUserData() {
