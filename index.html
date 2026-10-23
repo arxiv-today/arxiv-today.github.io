@@ -918,6 +918,7 @@
 
         function deleteUserButton() {
             const user = auth.currentUser;
+			if (!user) return;
 			if(user && $("#deleteuser-button").hasClass("btn-secondary")) {
 				$("#deleteuser-button").attr("disabled", "disabled").removeClass("btn-secondary").addClass("btn-warning").text("Just a couple seconds..");
 				setTimeout(() => {
@@ -928,7 +929,6 @@
             deleteUser(user).then(() => {
                 $("#deleteuser-button").text("That worked.").attr("disabled", "disabled");
 				$("#deleteuser-button").removeAttr("disabled").removeClass("btn-danger").addClass("btn-secondary").text("Delete user");
-				authStateObserver(user);
             }).catch((error) => {
 				$("#deleteuser-button").text("Requires a recent sign in: please sign out, sign in, and try again.");
                 console.log("User not deleted. Error:");
